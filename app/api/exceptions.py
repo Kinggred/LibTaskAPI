@@ -15,7 +15,7 @@ class BadDataProvidedException(APIException):
     default_message = "Bad data provided"
 
 
-class ConflictingDataProvidedException(APIException):
+class ConflictingDataException(APIException):
     status_code = status.HTTP_409_CONFLICT
     default_message = "Provided value already exists"
 

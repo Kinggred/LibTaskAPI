@@ -18,7 +18,11 @@ def get_readers(db: Annotated[Session, Depends(get_session)]) -> Page[ReaderView
     return crud_reader.paginated_get_all(db=db)
 
 
-@router.post("/", response_model=ReaderView, responses=VALIDATION_ERROR_RESPONSE | CONFLICTING_VALUE_PROVIDED,)
+@router.post(
+    "/",
+    response_model=ReaderView,
+    responses=VALIDATION_ERROR_RESPONSE | CONFLICTING_VALUE_PROVIDED,
+)
 def create_reader(
     db: Annotated[Session, Depends(get_session)],
     reader: CreateReaderSchema,

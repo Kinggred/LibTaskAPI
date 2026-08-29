@@ -15,7 +15,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         RequestValidationError,
         validation_exception_handler,
     )
-    
+
 
 async def api_exception_handler(
     request: Request,
@@ -30,6 +30,7 @@ async def api_exception_handler(
             "detail": exc.message,
         },
     )
+
 
 async def validation_exception_handler(
     request: Request,
