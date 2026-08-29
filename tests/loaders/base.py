@@ -1,6 +1,7 @@
 import json
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, TypeVar
+from typing import TypeVar
 from uuid import UUID
 
 from sqlmodel import Session

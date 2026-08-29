@@ -10,9 +10,8 @@ from sqlalchemy.exc import (
 )  # Potential problems ahead - import from sqlmodel
 from sqlmodel import Session, SQLModel, select
 
-from app.api.exceptions import DatabaseException, ForbiddenException, NotFoundException
+from app.api.exceptions import DatabaseException, NotFoundException
 from app.models.base import BaseModel
-from app.models.user import User
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
@@ -24,7 +23,6 @@ logger = logging.getLogger(__name__)
 class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaType: BaseModel]:
     def __init__(self, model: type[ModelType]):
         self.model = model
-        self.assigned = "created_by" in self.model.model_fields
         self.delete_softly = "enabled" in self.model.model_fields
 
     def db_add_operation(self, db: Session, object_to_add: ModelType) -> ModelType:
@@ -105,16 +103,12 @@ class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaTyp
         self,
         db: Session,
         *,
-        user: User | None = None,
         obj_in: CreateSchemaType,
         **kwargs,
     ) -> ModelType:
         obj_in_data = obj_in.model_dump()
         db_obj = self.model(**obj_in_data)  # type: ignore
-        if self.assigned:
-            if user is None:
-                raise DatabaseException
-            db_obj.created_by = user.id
+
         obj = self.db_add_operation(db=db, object_to_add=db_obj)
         logger.info(f"Created {self.model.__name__}: {obj.id}")
 
@@ -124,20 +118,14 @@ class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaTyp
         self,
         db: Session,
         *,
-        user: User,
         objs_in: list[CreateSchemaType],
     ) -> list[ModelType]:
-        if self.assigned and user is None:
-            raise DatabaseException()
 
         db_objs: list[ModelType] = []
 
         for obj_in in objs_in:
             obj_in_data = obj_in.model_dump()
             db_obj = self.model(**obj_in_data)  # type: ignore
-
-            if self.assigned:
-                db_obj.created_by = user.id
 
             db_objs.append(db_obj)
 
@@ -154,14 +142,11 @@ class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaTyp
         self,
         db: Session,
         *,
-        user: User,
         updated_obj_id: UUID,
         obj_in: UpdateSchemaType,
         **kwargs,
     ) -> ModelType:
-        current_obj = self.safe_get(db, id=updated_obj_id)
-        if self.assigned and user.id != current_obj.created_by:
-            raise ForbiddenException()
+        current_obj = self.safe_get(db, obj_id=updated_obj_id)
         return self.update(db, db_obj=current_obj, obj_in=obj_in)
 
     def update(
@@ -175,7 +160,7 @@ class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaTyp
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
-            update_data = obj_in.dict(exclude_unset=True)
+            update_data = obj_in.model_dump(exclude_unset=True)
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
@@ -255,16 +240,11 @@ class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaTyp
     def safe_remove(
         self,
         db: Session,
-        user: User,
         *,
         obj_id: UUID,
         hard: bool = False,
     ) -> ModelType:
         db_obj = self.safe_get(db, obj_id)
-
-        if self.assigned and db_obj.created_by != user.id:
-            raise ForbiddenException()
-
         return self.remove(
             db,
             db_obj=db_obj,
@@ -274,18 +254,11 @@ class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaTyp
     def safe_remove_many(
         self,
         db: Session,
-        user: User,
         *,
         ids: list[UUID],
         hard: bool = False,
     ) -> list[ModelType]:
-        db_objs = [self.safe_get(db, id) for id in ids]
-
-        if self.assigned:
-            for db_obj in db_objs:
-                if db_obj.created_by != user.id:
-                    raise ForbiddenException()
-
+        db_objs = [self.safe_get(db, obj_id) for obj_id in ids]
         return self.remove_many(
             db,
             db_objs=db_objs,

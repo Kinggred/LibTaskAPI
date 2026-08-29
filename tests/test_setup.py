@@ -4,7 +4,6 @@ from sqlalchemy import text
 from sqlmodel import Session
 
 from app.core.settings import get_settings
-from tests.loaders.users import load_all_users, load_user
 
 
 def test_healthcheck(client):
@@ -28,15 +27,3 @@ def test_database_connection_target(session: Session):
 
     assert settings.POSTGRES_DB == postgres_db
     assert result == settings.POSTGRES_DB
-
-
-def test_load_single_user(session):
-    user = load_user(session, "chef_john")
-
-    assert user.email == "john@test2.local"
-
-
-def test_load_all_users(session):
-    users = load_all_users(session)
-
-    assert len(users) == 5

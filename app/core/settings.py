@@ -2,6 +2,7 @@ from functools import lru_cache
 from os import environ
 
 from pydantic import Field, PostgresDsn, ValidationInfo, field_validator
+from pydantic.v1.networks import MultiHostDsn
 from pydantic_settings import BaseSettings
 
 if not environ.get("POSTGRES_USER"):
@@ -11,8 +12,8 @@ if not environ.get("POSTGRES_USER"):
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "FastAPI Application"
-    APP_VERSION: str = "0.0.0"
+    APP_NAME: str = "LibTaskAPI"
+    APP_VERSION: str = "0.1.0"
 
     DEBUG: bool = Field(default=False)
 
@@ -23,14 +24,6 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DSN: PostgresDsn | None = None
-
-    # Authorization
-    ALLOWED_ISSUERS: str = ""
-    AUDIENCE: str = ""
-    ALLOWED_CORS_ORIGINS: str = "*"
-    SECRET_KEY: str
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     @field_validator("POSTGRES_DSN", mode="after")
     @classmethod

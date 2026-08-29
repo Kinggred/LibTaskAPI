@@ -32,4 +32,3 @@ The project uses separate environment files depending on how the application is 
   database migrations locally.
 * **`.env.test`** — used when running tests. Tests use a separate PostgreSQL database instance and are executed outside
   the application container.
-  utside the container
