@@ -1,0 +1,4 @@
+-r test.txt
+
+ruff==0.16.5
+mypy==2.3.1
