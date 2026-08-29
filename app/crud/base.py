@@ -15,12 +15,12 @@ from app.models.base import BaseModel
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=SQLModel)
-UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=SQLModel)
 
 logger = logging.getLogger(__name__)
 
 
-class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaType: BaseModel]:
+class CRUDBase[ModelType: BaseModel, CreateSchemaType: SQLModel, UpdateSchemaType: SQLModel]:
     def __init__(self, model: type[ModelType]):
         self.model = model
         self.delete_softly = "enabled" in self.model.model_fields

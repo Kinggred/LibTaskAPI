@@ -2,7 +2,6 @@ from functools import lru_cache
 from os import environ
 
 from pydantic import Field, PostgresDsn, ValidationInfo, field_validator
-from pydantic.v1.networks import MultiHostDsn
 from pydantic_settings import BaseSettings
 
 if not environ.get("POSTGRES_USER"):

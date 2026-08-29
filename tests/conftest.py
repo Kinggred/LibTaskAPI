@@ -15,7 +15,7 @@ from app.core.settings import get_settings
 get_settings.cache_clear()
 settings = get_settings()
 
-from app.api.database import get_session
+from app.core.database import get_session
 from app.api.main import app
 
 
