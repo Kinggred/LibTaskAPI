@@ -10,7 +10,7 @@ from sqlalchemy.exc import (
 )  # Potential problems ahead - import from sqlmodel
 from sqlmodel import Session, SQLModel, select
 
-from app.api.exceptions import DatabaseException, NotFoundException
+from app.api.exceptions.exceptions import DatabaseException, NotFoundException
 from app.models.base import BaseModel
 
 ModelType = TypeVar("ModelType", bound=BaseModel)

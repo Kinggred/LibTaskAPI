@@ -1,7 +1,7 @@
-from pydantic import field_validator
 from sqlmodel import Field, SQLModel
 
 from app.models.base import BaseModel
+from app.models.common import SixDigitIdentifier
 
 
 class Reader(BaseModel, table=True):
@@ -9,21 +9,14 @@ class Reader(BaseModel, table=True):
 
 
 class CreateReaderSchema(SQLModel):
-    card_no: str
-
-    @field_validator("card_no")
-    @classmethod
-    def validate_card_no(cls, value: str) -> str:
-        if len(value) != 6:
-            raise ValueError("Card number must contain exactly 6 digits")
-
-        if not value.isdigit():
-            raise ValueError("Card number must contain digits only.")
-
-        return value
+    card_no: SixDigitIdentifier
 
 
 class ReaderView(SQLModel):
     card_no: str
 
     # lent_books: str
+
+
+class ReaderInBook(SQLModel):
+    card_no: SixDigitIdentifier

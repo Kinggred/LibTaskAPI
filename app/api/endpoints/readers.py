@@ -5,7 +5,7 @@ from fastapi.params import Depends
 from fastapi_pagination import Page
 from sqlmodel import Session
 
-from app.api.responses import CONFLICTING_VALUE_PROVIDED, VALIDATION_ERROR_RESPONSE
+from app.api.exceptions.error_responses import CONFLICTING_VALUE_PROVIDED, VALIDATION_ERROR_RESPONSE
 from app.core.database import get_session
 from app.crud.reader import crud_reader
 from app.models.reader import CreateReaderSchema, ReaderView

@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 
-from app.models.healthcheck import HealthcheckSchema
+from app.models.healthcheck import HealthcheckView
 
 router = APIRouter()
 
 
 @router.get("/health")
-def healthcheck() -> HealthcheckSchema:
-    return HealthcheckSchema()
+def healthcheck() -> HealthcheckView:
+    return HealthcheckView()

@@ -37,7 +37,7 @@ def test_create_reader_rejects_non_numeric_card_number(client):
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
-    assert response.json() == {"detail": "Card number must contain digits only."}
+    assert response.json() == {"detail": "Identifier must contain digits only."}
 
 
 def test_create_reader_rejects_short_card_number(client):
@@ -141,7 +141,7 @@ def test_validation_error_has_standard_response_format(client):
 
     assert response.status_code == 422
 
-    assert response.json() == {"detail": "Card number must contain digits only."}
+    assert response.json() == {"detail": "Identifier must contain digits only."}
 
 
 def test_conflict_error_has_standard_response_format(client):

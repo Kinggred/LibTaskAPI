@@ -10,11 +10,6 @@ class APIException(Exception):
         super().__init__(self.message)
 
 
-class BadDataProvidedException(APIException):
-    status_code = status.HTTP_422_UNPROCESSABLE_CONTENT
-    default_message = "Bad data provided"
-
-
 class ConflictingDataException(APIException):
     status_code = status.HTTP_409_CONFLICT
     default_message = "Provided value already exists"

@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.api.exceptions import APIException
+from app.api.exceptions.exceptions import APIException
 
 
 def register_exception_handlers(app: FastAPI) -> None:
@@ -43,9 +43,14 @@ async def validation_exception_handler(
 
     message = error["msg"].removeprefix("Value error, ")
 
+
+    loc = error["loc"]
+    field = str(loc[-1])
+
     return JSONResponse(
         status_code=422,
         content={
             "detail": message,
+            "fields": field,
         },
     )

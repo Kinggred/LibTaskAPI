@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel
 
 
-class HealthcheckSchema(SQLModel):
+class HealthcheckView(SQLModel):
     status: str = "ok"
