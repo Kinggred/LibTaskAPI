@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import Any
 
 from sqlmodel import Field, SQLModel
 
 from app.models.base import BaseModel
+from app.models.borrow_record import BorrowRecordView, BorrowRecord
 from app.models.common import BookState, SixDigitIdentifier
-from app.models.reader import ReaderInBook
+from app.models.reader import ReaderInBook, Reader
 
 
 class Book(BaseModel, table=True):
@@ -34,4 +36,40 @@ class BookView(SQLModel):
     created_at: datetime
     updated_at: datetime
 
-    borrower: ReaderInBook | None = None
+class BookExtendedView(BookView):
+    borrow_record: BorrowRecordView | None
+
+    @classmethod
+    def transformer(cls, rows) -> list[BookExtendedView]:
+        return [
+        BookExtendedView.from_row(row)
+        for row in rows
+    ]
+
+    @classmethod
+    def from_row(cls, row: Any) -> BookExtendedView:
+        book, borrow_record, reader = row
+
+        return cls.from_models(
+            book=book,
+            borrow_record=borrow_record,
+            reader=reader,
+        )
+    @classmethod
+    def from_models(
+        cls,
+        book: Book,
+        borrow_record: BorrowRecord | None,
+        reader: Reader | None,
+    ) -> BookExtendedView:
+        return cls(
+            **book.model_dump(),
+            borrow_record=(
+                BorrowRecordView.from_models(
+                    borrow_record,
+                    reader,
+                )
+                if borrow_record is not None and reader is not None
+                else None
+            ),
+        )

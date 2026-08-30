@@ -12,14 +12,15 @@ from app.api.exceptions.error_responses import (
 )
 from app.core.database import get_session
 from app.crud.book import crud_book
-from app.models.book import BookView, CreateBookSchema
+from app.models.book import BookExtendedView, BookView, CreateBookSchema
+from app.models.borrow_record import CreateBorrowRecordSchema
 from app.models.common import BookState, SixDigitIdentifier
 
 router = APIRouter()
 
 
-@router.get("/", response_model=Page[BookView])
-def get_books(db: Annotated[Session, Depends(get_session)]) -> Page[BookView]:
+@router.get("/", response_model=Page[BookExtendedView])
+def get_books(db: Annotated[Session, Depends(get_session)]) -> Page[BookExtendedView]:
     return crud_book.paginated_get_all(db=db)
 
 
@@ -42,12 +43,15 @@ def get_book(db: Annotated[Session, Depends(get_session)], serial: SixDigitIdent
     response_model=BookView,
     responses=VALIDATION_ERROR_RESPONSE | CONFLICTING_VALUE_PROVIDED | REQUESTED_RESOURCE_NOT_FOUND,
 )
-def update_book_state(
-    db: Annotated[Session, Depends(get_session)], serial: SixDigitIdentifier, book_state: BookState
-) -> BookView:
-    return crud_book.change_book_state(db=db, serial=serial, new_state=book_state)
-
 
 @router.delete("/{serial}", responses=VALIDATION_ERROR_RESPONSE)
 def delete_book(db: Annotated[Session, Depends(get_session)], serial: SixDigitIdentifier) -> None:
     crud_book.safe_remove(db=db, serial=serial)
+
+@router.post("/{serial}/borrow", response_model=BookView, responses=VALIDATION_ERROR_RESPONSE)
+def borrow_book(db: Annotated[Session, Depends(get_session)], serial: SixDigitIdentifier, body: CreateBorrowRecordSchema) -> BookView:
+    return crud_book.record_borrow(db=db, serial=serial, reader_card_no=body.reader_card_no)
+
+@router.delete("/{serial}/borrow", response_model=BookView, responses=VALIDATION_ERROR_RESPONSE)
+def return_book(db: Annotated[Session, Depends(get_session)], serial: SixDigitIdentifier) -> BookView:
+    return crud_book.record_return(db=db, serial=serial)

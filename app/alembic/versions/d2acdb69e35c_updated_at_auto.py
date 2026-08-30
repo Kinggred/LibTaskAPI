@@ -5,16 +5,16 @@ Revises: cbf81942aff3
 Create Date: 2026-08-30 14:20:59.369699
 
 """
+
 from collections.abc import Sequence
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'd2acdb69e35c'
-down_revision: str | Sequence[str] | None = 'cbf81942aff3'
+revision: str = "d2acdb69e35c"
+down_revision: str | Sequence[str] | None = "cbf81942aff3"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
-
 
 
 def upgrade() -> None:
