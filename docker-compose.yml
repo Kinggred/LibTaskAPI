@@ -6,6 +6,8 @@ services:
 
     env_file:
       - .env
+    environment:
+      LOAD_FIXTURES: "true"
 
     ports:
       - "8000:8000"
