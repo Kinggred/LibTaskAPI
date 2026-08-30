@@ -141,7 +141,7 @@ def test_validation_error_has_standard_response_format(client):
 
     assert response.status_code == 422
 
-    assert response.json() == {"detail": "Identifier must contain digits only.",  "fields": "card_no"}
+    assert response.json() == {"detail": "Identifier must contain digits only.", "fields": "card_no"}
 
 
 def test_conflict_error_has_standard_response_format(client):

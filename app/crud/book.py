@@ -75,7 +75,6 @@ class CRUDBook(CRUDBase[Book, CreateBookSchema, UpdateBookSchema]):
         if not book:
             raise NotFoundException(message="Book not found")
 
-
         # This could be problematic if one of the operations fail.
         borrow_record = crud_borrow_record.get_by_book_id(db=db, book_id=book.id)
         crud_borrow_record.remove(db=db, db_obj=borrow_record)

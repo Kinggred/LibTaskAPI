@@ -4,9 +4,9 @@ from typing import Any
 from sqlmodel import Field, SQLModel
 
 from app.models.base import BaseModel
-from app.models.borrow_record import BorrowRecordView, BorrowRecord
+from app.models.borrow_record import BorrowRecord, BorrowRecordView
 from app.models.common import BookState, SixDigitIdentifier
-from app.models.reader import ReaderInBook, Reader
+from app.models.reader import Reader
 
 
 class Book(BaseModel, table=True):
@@ -36,15 +36,13 @@ class BookView(SQLModel):
     created_at: datetime
     updated_at: datetime
 
+
 class BookExtendedView(BookView):
     borrow_record: BorrowRecordView | None
 
     @classmethod
     def transformer(cls, rows) -> list[BookExtendedView]:
-        return [
-        BookExtendedView.from_row(row)
-        for row in rows
-    ]
+        return [BookExtendedView.from_row(row) for row in rows]
 
     @classmethod
     def from_row(cls, row: Any) -> BookExtendedView:
@@ -55,6 +53,7 @@ class BookExtendedView(BookView):
             borrow_record=borrow_record,
             reader=reader,
         )
+
     @classmethod
     def from_models(
         cls,

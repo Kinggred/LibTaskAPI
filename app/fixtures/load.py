@@ -11,11 +11,7 @@ from app.models.reader import Reader
 
 def load_readers(db: Session) -> None:
     for fixture in READERS:
-        reader = db.exec(
-            select(Reader).where(
-                Reader.card_no == fixture["card_no"]
-            )
-        ).one_or_none()
+        reader = db.exec(select(Reader).where(Reader.card_no == fixture["card_no"])).one_or_none()
 
         if reader is not None:
             continue
@@ -31,11 +27,7 @@ def load_readers(db: Session) -> None:
 
 def load_books(db: Session) -> None:
     for fixture in BOOKS:
-        book = db.exec(
-            select(Book).where(
-                Book.serial == fixture["serial"]
-            )
-        ).one_or_none()
+        book = db.exec(select(Book).where(Book.serial == fixture["serial"])).one_or_none()
 
         if book is not None:
             continue
@@ -54,17 +46,9 @@ def load_books(db: Session) -> None:
 
 def load_borrows(db: Session) -> None:
     for fixture in BORROWS:
-        book = db.exec(
-            select(Book).where(
-                Book.serial == fixture["book_serial"]
-            )
-        ).one()
+        book = db.exec(select(Book).where(Book.serial == fixture["book_serial"])).one()
 
-        reader = db.exec(
-            select(Reader).where(
-                Reader.card_no == fixture["reader_card_no"]
-            )
-        ).one()
+        reader = db.exec(select(Reader).where(Reader.card_no == fixture["reader_card_no"])).one()
 
         existing_borrow = db.exec(
             select(BorrowRecord).where(

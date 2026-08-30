@@ -20,6 +20,8 @@ class BorrowRecord(BaseModel, table=True):
         nullable=False,
         index=True,
     )
+
+
 class CreateBorrowRecord(SQLModel):
     book_id: UUID
     reader_id: UUID
@@ -27,6 +29,7 @@ class CreateBorrowRecord(SQLModel):
 
 class CreateBorrowRecordSchema(SQLModel):
     reader_card_no: SixDigitIdentifier
+
 
 class BorrowRecordView(SQLModel):
     reader_card_no: SixDigitIdentifier

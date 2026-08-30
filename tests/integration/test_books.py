@@ -33,6 +33,7 @@ def create_book(
 
     return response.json()
 
+
 def test_borrow_book(client):
     create_reader(
         client,
@@ -57,6 +58,7 @@ def test_borrow_book(client):
 
     assert body["serial"] == "654321"
     assert body["state"] == "borrowed"
+
 
 def test_borrowed_book_is_returned_with_borrow_record(client):
     create_reader(
@@ -86,17 +88,14 @@ def test_borrowed_book_is_returned_with_borrow_record(client):
 
     body = response.json()
 
-    book = next(
-        item
-        for item in body["items"]
-        if item["serial"] == "654321"
-    )
+    book = next(item for item in body["items"] if item["serial"] == "654321")
 
     assert book["state"] == "borrowed"
 
     assert book["borrow_record"] is not None
     assert book["borrow_record"]["reader_card_no"] == "123456"
     assert book["borrow_record"]["borrowed_at"] is not None
+
 
 def test_available_book_has_no_borrow_record(client):
     create_book(
@@ -112,14 +111,11 @@ def test_available_book_has_no_borrow_record(client):
 
     body = response.json()
 
-    book = next(
-        item
-        for item in body["items"]
-        if item["serial"] == "654321"
-    )
+    book = next(item for item in body["items"] if item["serial"] == "654321")
 
     assert book["state"] == "available"
     assert book["borrow_record"] is None
+
 
 def test_return_book(client):
     create_reader(
@@ -151,6 +147,7 @@ def test_return_book(client):
 
     assert body["serial"] == "654321"
     assert body["state"] == "available"
+
 
 def test_returned_book_has_no_active_borrow_record(client):
     create_reader(
@@ -184,14 +181,11 @@ def test_returned_book_has_no_active_borrow_record(client):
 
     body = response.json()
 
-    book = next(
-        item
-        for item in body["items"]
-        if item["serial"] == "654321"
-    )
+    book = next(item for item in body["items"] if item["serial"] == "654321")
 
     assert book["state"] == "available"
     assert book["borrow_record"] is None
+
 
 def test_borrow_nonexistent_book(client):
     create_reader(
@@ -208,9 +202,8 @@ def test_borrow_nonexistent_book(client):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    assert response.json() == {
-        "detail": "Book not found"
-    }
+    assert response.json() == {"detail": "Book not found"}
+
 
 def test_borrow_with_nonexistent_reader(client):
     create_book(
@@ -227,9 +220,8 @@ def test_borrow_with_nonexistent_reader(client):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    assert response.json() == {
-        "detail": "Reader not found"
-    }
+    assert response.json() == {"detail": "Reader not found"}
+
 
 def test_borrow_already_borrowed_book(client):
     create_reader(
@@ -260,9 +252,8 @@ def test_borrow_already_borrowed_book(client):
 
     assert second_response.status_code == status.HTTP_409_CONFLICT
 
-    assert second_response.json() == {
-        "detail": "Book not available"
-    }
+    assert second_response.json() == {"detail": "Book not available"}
+
 
 def test_borrow_book_rejects_invalid_serial(client):
     response = client.post(
@@ -278,6 +269,7 @@ def test_borrow_book_rejects_invalid_serial(client):
 
     assert body["fields"] == "serial"
     assert isinstance(body["detail"], str)
+
 
 def test_get_books_pagination(client):
     create_book(
@@ -312,6 +304,7 @@ def test_get_books_pagination(client):
     assert len(body["items"]) == 2
     assert body["total"] >= 3
 
+
 def test_book_pagination_contains_one_entry_per_book(client):
     create_reader(
         client,
@@ -343,10 +336,7 @@ def test_book_pagination_contains_one_entry_per_book(client):
 
     body = response.json()
 
-    serials = [
-        item["serial"]
-        for item in body["items"]
-    ]
+    serials = [item["serial"] for item in body["items"]]
 
     assert serials.count("100001") == 1
     assert serials.count("100002") == 1
