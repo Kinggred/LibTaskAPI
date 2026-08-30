@@ -5,6 +5,8 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.settings import get_settings
 from app.models.base import BaseModel
+from app.models.book import Book
+from app.models.reader import Reader
 
 config = context.config
 if config.config_file_name is not None:

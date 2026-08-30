@@ -43,7 +43,6 @@ async def validation_exception_handler(
 
     message = error["msg"].removeprefix("Value error, ")
 
-
     loc = error["loc"]
     field = str(loc[-1])
 

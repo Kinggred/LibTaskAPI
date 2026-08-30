@@ -4,6 +4,7 @@ from sqlmodel import SQLModel
 class ErrorResponse(SQLModel):
     detail: str
 
+
 class ValidationErrorResponse(ErrorResponse):
     field: str
 

@@ -1,15 +1,16 @@
-from uuid import UUID
 
 from sqlmodel import Session, select
 
 from app.api.exceptions.exceptions import ConflictingDataException, NotFoundException
-from app.crud.base import CRUDBase, ModelType
+from app.crud.base import CRUDBase
 from app.models.book import Book, CreateBookSchema, UpdateBookSchema
 from app.models.common import BookState, SixDigitIdentifier
 
 
 class CRUDBook(CRUDBase[Book, CreateBookSchema, UpdateBookSchema]):
-    def get_book_by_serial(self, db: Session, *, serial: SixDigitIdentifier, include_removed: bool = False) -> Book | None:
+    def get_book_by_serial(
+        self, db: Session, *, serial: SixDigitIdentifier, include_removed: bool = False
+    ) -> Book | None:
         statement = select(Book).where(Book.serial == serial)
 
         if not include_removed:

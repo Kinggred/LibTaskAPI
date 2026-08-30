@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlmodel import Field, SQLModel
 
 from app.models.base import BaseModel
@@ -29,5 +31,7 @@ class BookView(SQLModel):
     title: str
     author: str
     state: BookState
+    created_at: datetime
+    updated_at: datetime
 
     borrower: ReaderInBook | None = None

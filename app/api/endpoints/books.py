@@ -47,6 +47,7 @@ def update_book_state(
 ) -> BookView:
     return crud_book.change_book_state(db=db, serial=serial, new_state=book_state)
 
+
 @router.delete("/{serial}", responses=VALIDATION_ERROR_RESPONSE)
 def delete_book(db: Annotated[Session, Depends(get_session)], serial: SixDigitIdentifier) -> None:
     crud_book.safe_remove(db=db, serial=serial)
